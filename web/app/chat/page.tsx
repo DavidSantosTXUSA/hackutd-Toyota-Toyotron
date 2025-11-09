@@ -15,6 +15,7 @@ import { MemoizedMarkdown } from "@/components/memoized-markdown";
 import { supabase } from "@/lib/supabase/client";
 import { SpeechRecognitionManager } from "@/lib/voice/speechRecognition";
 import { SpeechSynthesisManager } from "@/lib/voice/speechSynthesis";
+import { SilenceDetector } from "@/lib/voice/silenceDetector";
 import { toast } from "sonner";
 
 type DisplayMessage = {
@@ -140,9 +141,9 @@ export default function ChatPage() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const speechRecognitionRef = useRef<SpeechRecognitionManager | null>(null);
   const speechSynthesisRef = useRef<SpeechSynthesisManager | null>(null);
+  const silenceDetectorRef = useRef<SilenceDetector | null>(null);
   const lastSpokenMessageIdRef = useRef<string | null>(null);
   const voiceMessageBufferRef = useRef<string>("");
-  const silenceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const streamingTextRef = useRef<string>("");
 
   // Get auth token from Supabase session and load preferences
@@ -164,6 +165,9 @@ export default function ChatPage() {
       console.error("[ChatPage] Failed to initialize speech synthesis:", error);
     }
 
+    // Initialize silence detector (callback will be set up in handleVoiceToggle)
+    // We'll create it with a placeholder callback that gets updated
+
     return () => {
       // Cleanup
       if (speechRecognitionRef.current) {
@@ -172,8 +176,8 @@ export default function ChatPage() {
       if (speechSynthesisRef.current) {
         speechSynthesisRef.current.cancel();
       }
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
+      if (silenceDetectorRef.current) {
+        silenceDetectorRef.current.stop();
       }
     };
   }, []);
@@ -345,8 +349,8 @@ export default function ChatPage() {
     }
   };
 
-  // Handle voice input - true voice mode with continuous listening
-  const handleVoiceToggle = () => {
+  // Handle voice input - true voice mode with Web Audio API silence detection
+  const handleVoiceToggle = async () => {
     if (!speechRecognitionRef.current) {
       toast.error("Voice recognition is not supported in this browser");
       return;
@@ -355,6 +359,7 @@ export default function ChatPage() {
     if (isListening) {
       // Stop listening and send final message
       speechRecognitionRef.current.stop();
+      silenceDetectorRef.current?.stop();
       setIsListening(false);
       
       // Send accumulated message if any
@@ -366,14 +371,8 @@ export default function ChatPage() {
       }
       
       setIsVoiceMode(false);
-      
-      // Clear silence timeout
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-        silenceTimeoutRef.current = null;
-      }
     } else {
-      // Start continuous listening
+      // Start continuous listening with silence detection
       setIsVoiceMode(true);
       setIsListening(true);
       voiceMessageBufferRef.current = "";
@@ -384,6 +383,42 @@ export default function ChatPage() {
         setIsSpeaking(false);
       }
 
+      // Start Web Audio API silence detection
+      try {
+        // Stop existing detector if any
+        if (silenceDetectorRef.current) {
+          silenceDetectorRef.current.stop();
+        }
+        
+        // Create new silence detector with callback that has access to current state
+        silenceDetectorRef.current = new SilenceDetector(
+          () => {
+            // Silence detected - auto-send message
+            if (voiceMessageBufferRef.current.trim()) {
+              speechRecognitionRef.current?.stop();
+              silenceDetectorRef.current?.stop();
+              void sendMessage({
+                parts: [{ type: "text", text: voiceMessageBufferRef.current.trim() }],
+              });
+              voiceMessageBufferRef.current = "";
+              setIsListening(false);
+              setIsVoiceMode(false);
+            }
+          },
+          () => {
+            // Audio detected - user is speaking, reset silence timer
+            // This is handled automatically by SilenceDetector
+          }
+        );
+        
+        if (silenceDetectorRef.current.getSupported()) {
+          await silenceDetectorRef.current.start();
+        }
+      } catch (error) {
+        console.warn("[ChatPage] Silence detection not available:", error);
+        // Continue without silence detection - user can manually stop
+      }
+
       speechRecognitionRef.current.start({
         onStart: () => {
           setIsListening(true);
@@ -392,24 +427,7 @@ export default function ChatPage() {
           if (isFinal) {
             // Final result - add to buffer
             voiceMessageBufferRef.current += text + " ";
-            
-            // Reset silence timeout
-            if (silenceTimeoutRef.current) {
-              clearTimeout(silenceTimeoutRef.current);
-            }
-            
-            // Auto-send after 2 seconds of silence
-            silenceTimeoutRef.current = setTimeout(() => {
-              if (voiceMessageBufferRef.current.trim()) {
-                speechRecognitionRef.current?.stop();
-                void sendMessage({
-                  parts: [{ type: "text", text: voiceMessageBufferRef.current.trim() }],
-                });
-                voiceMessageBufferRef.current = "";
-                setIsListening(false);
-                setIsVoiceMode(false);
-              }
-            }, 2000);
+            // Silence detector will handle auto-send after 2 seconds of silence
           } else {
             // Interim result - could show in UI for feedback
             // For now, we'll wait for final results
@@ -419,18 +437,12 @@ export default function ChatPage() {
           setIsListening(false);
           setIsVoiceMode(false);
           voiceMessageBufferRef.current = "";
-          if (silenceTimeoutRef.current) {
-            clearTimeout(silenceTimeoutRef.current);
-            silenceTimeoutRef.current = null;
-          }
+          silenceDetectorRef.current?.stop();
           toast.error(error);
         },
         onEnd: () => {
           setIsListening(false);
-          if (silenceTimeoutRef.current) {
-            clearTimeout(silenceTimeoutRef.current);
-            silenceTimeoutRef.current = null;
-          }
+          silenceDetectorRef.current?.stop();
           // Don't disable voice mode on end - allow re-starting
         },
       });
