@@ -48,6 +48,14 @@ const DEFAULT_NAV: NavItem[] = [
   { label: 'Experience', href: '/#experience' },
 ]
 
+const AUTHENTICATED_NAV: NavItem[] = [
+  { label: 'Home', href: '/#top' },
+  { label: 'Agent', href: '/chat' },
+  { label: 'Profile', href: '/profile' },
+  { label: 'Models', href: '/#models' },
+  { label: 'Pricing', href: '/#pricing' },
+]
+
 const DEFAULT_SECONDARY: SecondaryLink[] = [{ label: 'Sign In', href: '/login' }]
 
 const DEFAULT_CTA: CtaAction = { label: 'Launch Agent', href: '/signup' }
@@ -148,7 +156,7 @@ export function ToyotaHeader({
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-semibold lg:flex">
-          {navItems.map((item) => (
+          {(isAuthenticated ? AUTHENTICATED_NAV : navItems).map((item) => (
             <Link key={item.href} href={item.href} className={cn(navLinkClasses, 'group')}>
               <span className="tracking-wide">{item.label}</span>
               <span className="absolute -bottom-2 left-0 h-0.5 w-full origin-left scale-x-0 bg-primary transition-transform duration-300 ease-out group-hover:scale-x-100" />
@@ -216,7 +224,7 @@ export function ToyotaHeader({
                     </span>
                   </Link>
                   <div className="flex flex-col gap-6">
-                    {navItems.map((item) => (
+                    {(isAuthenticated ? AUTHENTICATED_NAV : navItems).map((item) => (
                       <Link key={item.href} href={item.href} className="text-lg font-semibold text-zinc-800">
                         {item.label}
                       </Link>

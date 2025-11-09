@@ -2,7 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 
 type FooterLinkGroup = {
   title: string
@@ -68,18 +67,6 @@ export function ToyotaFooter({
               Toyota Agent is your intelligent co-pilot for finding, comparing, and experiencing Toyota vehicles.
               Meticulously crafted for a modern, human-centered shopping journey.
             </p>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <span className="text-xs uppercase tracking-[0.3em] text-secondary-foreground/60">
-                Stay in the loop
-              </span>
-              <Button
-                asChild
-                variant="secondary"
-                className="rounded-full border border-white/10 bg-white/10 px-6 text-sm font-semibold text-white shadow-[0_16px_34px_-20px_rgba(255,255,255,0.45)] hover:bg-white/20 hover:text-white"
-              >
-                <Link href="/signup">Join Toyota Agent</Link>
-              </Button>
-            </div>
           </div>
 
           {columns.map((group) => (

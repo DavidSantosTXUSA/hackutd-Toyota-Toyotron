@@ -2,6 +2,61 @@ import { NextResponse } from "next/server"
 
 import { createSsrClient } from "@/lib/supabase/server"
 
+export async function GET(request: Request) {
+  try {
+    const supabase = await createSsrClient();
+    const {
+      data: { user: cookieUser },
+      error: cookieUserError,
+    } = await supabase.auth.getUser();
+
+    let user = cookieUser
+    let userError = cookieUserError
+
+    if (!user) {
+      const authHeader = request.headers.get("authorization") ?? request.headers.get("Authorization")
+      const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7).trim() : null
+
+      if (token) {
+        const {
+          data: { user: headerUser },
+          error: headerError,
+        } = await supabase.auth.getUser(token)
+
+        if (headerUser) {
+          user = headerUser
+          userError = null
+        } else {
+          userError = headerError
+        }
+      }
+    }
+
+    if (userError || !user) {
+      if (userError) {
+        console.error("Failed to verify user:", userError)
+      }
+      return NextResponse.json({ message: "Unable to verify user." }, { status: 401 })
+    }
+
+    const { data: bookings, error: bookingsError } = await supabase
+      .from("test_drive_bookings")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("booking_date", { ascending: false })
+
+    if (bookingsError) {
+      console.error("Failed to fetch bookings:", bookingsError)
+      return NextResponse.json({ message: "Unable to fetch bookings." }, { status: 500 })
+    }
+
+    return NextResponse.json({ bookings: bookings || [] })
+  } catch (error) {
+    console.error("Unexpected error fetching bookings:", error)
+    return NextResponse.json({ message: "Something went wrong while fetching bookings." }, { status: 500 })
+  }
+}
+
 type VehicleDetails = {
   trimId: number
   make?: string | null
