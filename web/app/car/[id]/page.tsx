@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { ArrowLeft, Calendar, DollarSign, Fuel, Gauge, GitCompare, Users, Zap } from "lucide-react"
+import { ArrowLeft, Calendar, DollarSign, Fuel, Gauge, Users, Zap } from "lucide-react"
 
 import { ToyotaFooter } from "@/components/layout/toyota-footer"
 import { Badge } from "@/components/ui/badge"
@@ -292,15 +292,6 @@ export default async function CarDetailPage({
                   <Button className="h-12 w-full rounded-full px-6 text-sm font-semibold shadow-[0_24px_48px_-32px_rgba(235,10,30,0.7)]">
                     <Calendar className="mr-2 h-4 w-4" />
                     Schedule test drive
-                  </Button>
-                </Link>
-                <Link href="/compare" className="min-w-[160px]">
-                  <Button
-                    variant="outline"
-                    className="h-12 w-full rounded-full border-border/70 px-6 text-sm font-semibold hover:border-primary/70 hover:text-primary"
-                  >
-                    <GitCompare className="mr-2 h-4 w-4" />
-                    Compare
                   </Button>
                 </Link>
               </div>

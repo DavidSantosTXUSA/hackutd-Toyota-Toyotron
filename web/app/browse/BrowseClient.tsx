@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { ArrowRight, ChevronLeft, ChevronRight, Filter, Loader2, Search } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, Filter, Loader2, Search, Plus, X } from "lucide-react"
 
 import type { Car } from "@/lib/supabase/types"
 import { Badge } from "@/components/ui/badge"
@@ -69,6 +69,22 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
   const [searchInput, setSearchInput] = useState(initialFilters.q)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [selectedCarIds, setSelectedCarIds] = useState<string[]>(() => {
+    if (typeof window === "undefined") {
+      const compare = initialParams.compare
+      return compare ? compare.split(",").filter(Boolean) : []
+    }
+    const stored = localStorage.getItem("selectedCarsForComparison")
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch {
+        return []
+      }
+    }
+    const compare = initialParams.compare
+    return compare ? compare.split(",").filter(Boolean) : []
+  })
 
   const debouncedSearch = useDebouncedValue(searchInput, 350)
   const controllerRef = useRef<AbortController | null>(null)
@@ -81,6 +97,10 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
   useEffect(() => {
     setMeta(initialMeta)
   }, [initialMeta])
+
+  useEffect(() => {
+    localStorage.setItem("selectedCarsForComparison", JSON.stringify(selectedCarIds))
+  }, [selectedCarIds])
 
   useEffect(() => {
     setFilters((prev) => {
@@ -234,6 +254,28 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
     [meta.totalPages]
   )
 
+  const toggleCarForComparison = useCallback(
+    (carId: string) => {
+      setSelectedCarIds((prev) => {
+        let updated: string[]
+        if (prev.includes(carId)) {
+          updated = prev.filter((id) => id !== carId)
+        } else {
+          if (prev.length >= 3) {
+            return prev
+          }
+          updated = [...prev, carId]
+        }
+        return updated
+      })
+    },
+    []
+  )
+
+  const removeFromComparison = useCallback((carId: string) => {
+    setSelectedCarIds((prev) => prev.filter((id) => id !== carId))
+  }, [])
+
   const vehiclesLabel = useMemo(() => {
     if (meta.total === 0) {
       return "No vehicles found"
@@ -376,19 +418,51 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
       </section>
 
       <section className="toyota-container space-y-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div className="space-y-2">
+        <div className="flex flex-row items-end justify-between gap-4">
+          <div className="flex flex-1 flex-col gap-2">
             <h2 className="text-2xl font-bold tracking-tight text-secondary sm:text-3xl">
               Toyota models recommended for you
             </h2>
-            <p className="text-sm text-muted-foreground">{vehiclesLabel}</p>
+            <div className="flex items-center gap-4">
+              <p className="text-sm text-muted-foreground">{vehiclesLabel}</p>
+              {selectedCarIds.length > 0 && (
+                <div className="rounded-full border border-border/70 bg-card/80 px-3 py-1.5">
+                  <div className="flex items-center gap-2">
+                    {cars
+                      .filter((car) => selectedCarIds.includes(car.id))
+                      .map((car) => (
+                        <div
+                          key={car.id}
+                          className="flex items-center gap-1.5 rounded-full bg-background/60 px-2 py-0.5 text-xs font-semibold text-secondary"
+                        >
+                          <span className="truncate">{car.name}</span>
+                          <button
+                            onClick={() => removeFromComparison(car.id)}
+                            className="hover:text-primary"
+                            aria-label={`Remove ${car.name} from comparison`}
+                          >
+                            <X className="h-3 w-3 flex-shrink-0" />
+                          </button>
+                        </div>
+                      ))}
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">
+                      {selectedCarIds.length}/3
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          <Link href="/compare" className="self-start md:self-auto">
+          <Link
+            href={selectedCarIds.length > 0 ? `/compare?compare=${selectedCarIds.join(",")}` : "/compare"}
+            className="flex-shrink-0"
+          >
             <Button
               variant="ghost"
-              className="rounded-full border border-border/70 px-6 font-semibold hover:border-primary/70 hover:text-primary"
+              className="rounded-full border border-border/70 px-6 font-semibold hover:border-primary/70 hover:text-primary disabled:opacity-50"
+              disabled={selectedCarIds.length === 0}
             >
-              Compare selected
+              Compare selected {selectedCarIds.length > 0 && `(${selectedCarIds.length})`}
             </Button>
           </Link>
         </div>
@@ -420,7 +494,7 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
               </div>
             ) : (
               cars.map((car) => (
-                <Link key={car.id} href={`/car/${car.id}`} className="group relative">
+                <div key={car.id} className="group relative">
                   <article className="flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/80 shadow-[0_26px_54px_-46px_rgba(15,20,26,0.7)] transition-transform duration-300 hover:-translate-y-1.5">
                     <div className="relative">
                       <div className="relative aspect-[4/3] overflow-hidden">
@@ -459,12 +533,32 @@ export default function BrowseClient({ initialItems, initialMeta, initialParams 
                           <p className="text-lg font-semibold text-secondary">{mpgLabel(car)}</p>
                         </div>
                       </div>
-                      <Button className="mt-auto w-full rounded-full bg-primary px-6 py-2 text-sm font-semibold">
-                        View details <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                      <div className="mt-auto flex gap-3">
+                        <Link href={`/car/${car.id}`} className="flex-1">
+                          <Button className="w-full rounded-full bg-primary px-6 py-2 text-sm font-semibold">
+                            View details <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <button
+                          onClick={() => toggleCarForComparison(car.id)}
+                          className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-colors ${
+                            selectedCarIds.includes(car.id)
+                              ? "border-primary bg-primary text-white"
+                              : "border-border/70 bg-background/80 text-secondary hover:border-primary hover:bg-primary/10"
+                          }`}
+                          aria-label={`${selectedCarIds.includes(car.id) ? "Remove" : "Add"} ${car.name} to comparison`}
+                          disabled={!selectedCarIds.includes(car.id) && selectedCarIds.length >= 3}
+                        >
+                          {selectedCarIds.includes(car.id) ? (
+                            <X className="h-5 w-5" />
+                          ) : (
+                            <Plus className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </article>
-                </Link>
+                </div>
               ))
             )}
           </div>
