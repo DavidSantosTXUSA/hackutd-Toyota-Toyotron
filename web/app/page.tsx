@@ -1,270 +1,348 @@
+import Image from "next/image"
 import Link from "next/link"
+import { ArrowRight, CalendarCheck, Gauge, MessageSquare, ShieldCheck, Sparkles } from "lucide-react"
+
+import { ToyotaFooter } from "@/components/layout/toyota-footer"
+import { ToyotaHeader } from "@/components/layout/toyota-header"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, MessageSquare, Car, DollarSign, Calendar } from "lucide-react"
+
+const navItems = [
+  { label: "Features", href: "#features" },
+  { label: "Experience", href: "#experience" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Models", href: "/browse" },
+]
+
+const heroStats = [
+  { label: "Toyota Models", value: "36+", detail: "2025 lineup curated" },
+  { label: "Drivers Guided", value: "5k+", detail: "Personalised journeys" },
+  { label: "Time Saved", value: "12 hrs", detail: "Avg. research reduced" },
+]
+
+const featureCards = [
+  {
+    icon: MessageSquare,
+    title: "Conversation-first guidance",
+    description:
+      "An AI concierge that understands your lifestyle, budget, and must-haves to surface the perfect Toyota match.",
+    chip: "AI chat",
+  },
+  {
+    icon: Gauge,
+    title: "Human-centred comparisons",
+    description:
+      "Compare trims, MPG, incentives, and total ownership costs with calm, de-cluttered layouts that make decisions simple.",
+    chip: "Insight",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Confidence built-in",
+    description:
+      "Every recommendation factors Toyota Safety Sense, reliability data, and dealership availability so you can act decisively.",
+    chip: "Trust",
+  },
+]
+
+const experienceSteps = [
+  {
+    step: "Step 01",
+    title: "Share what matters",
+    description: "Start with a 2-minute preference quiz to set budgets, seating needs, and driving style.",
+  },
+  {
+    step: "Step 02",
+    title: "Chat with your agent",
+    description: "Co-design your shortlist with an intelligent Toyota specialist that answers every question in context.",
+  },
+  {
+    step: "Step 03",
+    title: "Explore with clarity",
+    description: "Compare the models that fit, with payment scenarios, incentives, and ownership costs side-by-side.",
+  },
+  {
+    step: "Step 04",
+    title: "Book the experience",
+    description: "Schedule test drives or request dealership outreach without leaving the flow.",
+  },
+]
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
+    <div className="min-h-screen bg-background text-foreground">
+      <div className="relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-[240px] right-[-240px] h-[520px] w-[520px] rounded-full bg-primary/15 blur-[140px]" />
+        <div className="pointer-events-none absolute bottom-[-360px] left-[-200px] h-[620px] w-[620px] rounded-full bg-secondary/10 blur-[160px]" />
+
+        <ToyotaHeader
+          navItems={navItems}
+          actions={[
+            { label: "Sign In", href: "/login", variant: "ghost" },
+            {
+              label: "Launch Agent",
+              href: "/signup",
+              variant: "primary",
+              icon: <ArrowRight className="h-4 w-4" />,
+            },
+          ]}
+        />
+
+        <main className="space-y-32 pb-24 pt-14 sm:pt-20">
+          <section className="toyota-container grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="relative space-y-10">
+              <span className="toyota-chip">Toyota Agent</span>
+              <div className="space-y-6">
+                <h1 className="text-balance text-4xl font-black tracking-tight text-secondary sm:text-5xl lg:text-6xl">
+                  Discover your Toyota with an agent that feels bespoke.
+                </h1>
+                <p className="text-lg text-muted-foreground sm:text-xl">
+                  Toyota Agent blends conversational intelligence with thoughtful UX so you can explore, compare, and
+                  book with absolute confidence.
+                </p>
               </div>
-              <span className="text-xl font-bold">Toyota Agent</span>
-            </div>
-            <nav className="hidden md:flex items-center gap-8">
-              <Link
-                href="#features"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Features
-              </Link>
-              <Link
-                href="#how-it-works"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                How It Works
-              </Link>
-              <Link
-                href="#pricing"
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Pricing
-              </Link>
-            </nav>
-            <div className="flex items-center gap-3">
-              <Link href="/login">
-                <Button variant="ghost" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/signup">
-                <Button size="sm" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-                  Get Started <ArrowRight className="ml-1 w-4 h-4" />
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="container mx-auto px-6 lg:px-8 py-20 lg:py-32">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-mono mb-8">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-            AI-Powered Discovery
-          </div>
-          <h1 className="text-5xl lg:text-7xl font-bold tracking-tight mb-6 text-balance">
-            Find your perfect Toyota with intelligent guidance
-          </h1>
-          <p className="text-xl lg:text-2xl text-muted-foreground mb-10 text-pretty max-w-2xl mx-auto">
-            An AI shopping companion that understands your needs, calculates total ownership costs, and guides you to
-            your dream Toyota.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/signup">
-              <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 h-12 text-base">
-                Start Your Journey <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-            </Link>
-            <Link href="/browse">
-              <Button variant="outline" size="lg" className="px-8 h-12 text-base bg-transparent">
-                Browse Toyota Models
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Hero Image Placeholder */}
-        <div className="mt-20 max-w-6xl mx-auto">
-          <div className="rounded-2xl border border-border bg-card p-2 shadow-2xl">
-            <div className="rounded-xl bg-gradient-to-br from-primary/5 via-accent/5 to-primary/10 aspect-[16/9] flex items-center justify-center">
-              <div className="text-center p-8">
-                <MessageSquare className="w-16 h-16 mx-auto mb-4 text-primary" />
-                <p className="text-lg text-muted-foreground">AI Agent Chat Interface Preview</p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <Link href="/signup">
+                  <Button className="h-12 rounded-full px-7 text-base font-semibold shadow-[0_25px_45px_-28px_rgba(235,10,30,0.75)]">
+                    Get started <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+                <Link href="/browse">
+                  <Button
+                    variant="outline"
+                    className="h-12 rounded-full border-border/70 px-7 text-base font-semibold hover:bg-muted/60"
+                  >
+                    Browse Toyota lineup
+                  </Button>
+                </Link>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="container mx-auto px-6 lg:px-8 py-20">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl lg:text-5xl font-bold mb-4">Why Toyota Agent?</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">A smarter way to shop for your next Toyota</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div className="rounded-xl border border-border bg-card p-6 hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-              <MessageSquare className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Guided Discovery</h3>
-            <p className="text-muted-foreground">
-              Our AI agent asks the right questions to understand your needs and preferences.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-6 hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-              <DollarSign className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Total Cost View</h3>
-            <p className="text-muted-foreground">
-              See MSRP, insurance estimates, and financing options all in one place.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-6 hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center mb-4">
-              <Car className="w-6 h-6 text-accent" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Smart Comparison</h3>
-            <p className="text-muted-foreground">
-              Compare up to 3 models side-by-side with intelligent recommendations.
-            </p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-6 hover:shadow-lg transition-shadow">
-            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-              <Calendar className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Easy Test Drives</h3>
-            <p className="text-muted-foreground">Schedule test drives at your preferred dealership with one click.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="bg-muted/30 py-20">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl lg:text-5xl font-bold mb-4">How It Works</h2>
-            <p className="text-xl text-muted-foreground">From preferences to purchase in four simple steps</p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
-            {[
-              {
-                step: "01",
-                title: "Tell Us Your Needs",
-                desc: "Quick preference quiz to understand what matters to you",
-              },
-              { step: "02", title: "Chat with Agent", desc: "Our AI guides you through personalized recommendations" },
-              { step: "03", title: "Compare & Decide", desc: "See total costs and compare models side-by-side" },
-              { step: "04", title: "Schedule Test Drive", desc: "Book your test drive and experience your Toyota" },
-            ].map((item, i) => (
-              <div key={i} className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary text-primary-foreground font-mono text-xl font-bold mb-4">
-                  {item.step}
+              <div className="grid gap-6 rounded-2xl border border-border/70 bg-card/80 p-6 backdrop-blur lg:max-w-xl">
+                <p className="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground/80">
+                  Trusted Toyota experience
+                </p>
+                <div className="grid gap-6 sm:grid-cols-3">
+                  {heroStats.map((stat) => (
+                    <div key={stat.label} className="space-y-1">
+                      <span className="text-2xl font-bold text-secondary sm:text-3xl">{stat.value}</span>
+                      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/70">
+                        {stat.label}
+                      </p>
+                      <p className="text-sm text-muted-foreground/80">{stat.detail}</p>
+                    </div>
+                  ))}
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
-                <p className="text-muted-foreground text-sm">{item.desc}</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-      {/* CTA Section */}
-      <section className="container mx-auto px-6 lg:px-8 py-20">
-        <div className="max-w-4xl mx-auto text-center rounded-2xl border border-border bg-card p-12">
-          <h2 className="text-3xl lg:text-5xl font-bold mb-4">Ready to find your Toyota?</h2>
-          <p className="text-xl text-muted-foreground mb-8">
-            Join thousands discovering their perfect vehicle with AI guidance
-          </p>
-          <Link href="/signup">
-            <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 h-12 text-base">
-              Get Started Now <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-border bg-muted/20">
-        <div className="container mx-auto px-6 lg:px-8 py-12">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Car className="w-5 h-5 text-primary-foreground" />
+            <div className="relative">
+              <div className="toyota-surface relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/30" />
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem]">
+                  <Image
+                    src="/toyota-rav4-hybrid.jpg"
+                    alt="Toyota RAV4 Hybrid"
+                    fill
+                    className="object-cover"
+                    sizes="(min-width: 1280px) 45vw, (min-width: 768px) 55vw, 100vw"
+                    priority
+                  />
                 </div>
-                <span className="text-lg font-bold">Toyota Agent</span>
+                <div className="absolute bottom-4 left-4 right-4 flex flex-col gap-3 rounded-2xl bg-background/80 p-4 backdrop-blur">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground/90">
+                    <span className="font-semibold uppercase tracking-[0.28em] text-secondary">Showcase</span>
+                    <span>RAV4 Hybrid XSE</span>
+                  </div>
+                  <div className="grid gap-4 rounded-xl border border-border/70 bg-card/90 p-4 sm:grid-cols-3">
+                    <div>
+                      <p className="text-xs text-muted-foreground/80">MPG</p>
+                      <p className="text-lg font-semibold text-secondary">41 / 38</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground/80">MSRP</p>
+                      <p className="text-lg font-semibold text-secondary">$36,000</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground/80">Drive</p>
+                      <p className="text-lg font-semibold text-secondary">AWD</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="text-sm text-muted-foreground">Your AI-powered Toyota shopping companion</p>
             </div>
-            <div>
-              <h4 className="font-semibold mb-3">Product</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Features
+          </section>
+
+          <section id="features" className="toyota-container space-y-14">
+            <div className="max-w-3xl space-y-4">
+              <span className="toyota-chip">Why Toyota Agent</span>
+              <h2 className="text-pretty text-3xl font-black tracking-tight text-secondary sm:text-4xl">
+                Designed with Toyota’s precision for drivers who expect clarity.
+              </h2>
+              <p className="text-lg text-muted-foreground sm:text-xl">
+                Every touchpoint is crafted to feel modern, calm, and unmistakably Toyota—so decisions feel effortless.
+              </p>
+            </div>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {featureCards.map((feature) => (
+                <div
+                  key={feature.title}
+                  className="group relative flex h-full flex-col gap-6 rounded-2xl border border-border/70 bg-card p-8 transition-all hover:-translate-y-1 hover:border-primary/70 hover:shadow-[0_32px_60px_-40px_rgba(235,10,30,0.6)]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <feature.icon className="h-6 w-6" />
+                    </div>
+                    <span className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                      {feature.chip}
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <h3 className="text-xl font-bold text-secondary">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  </div>
+                  <div className="mt-auto h-[1px] w-full rounded-full bg-gradient-to-r from-transparent via-primary/60 via-30% to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="toyota-container" id="experience">
+            <div className="rounded-[2.5rem] border border-border/70 bg-card/80 p-10 shadow-[0_32px_75px_-50px_rgba(15,20,26,0.7)] backdrop-blur">
+              <div className="flex flex-col gap-12 lg:flex-row">
+                <div className="max-w-sm space-y-6">
+                  <span className="toyota-chip">Experience Flow</span>
+                  <h2 className="text-pretty text-3xl font-black tracking-tight text-secondary sm:text-4xl">
+                    From curiosity to test drive in one guided path.
+                  </h2>
+                  <p className="text-base text-muted-foreground">
+                    Toyota Agent orchestrates every step with the precision of a Lexus dashboard—clean layouts,
+                    confident typography, and thoughtful spacing that keeps focus on what matters.
+                  </p>
+                  <Link href="/quiz">
+                    <Button
+                      variant="outline"
+                      className="rounded-full border-border/60 px-6 font-semibold hover:border-primary/60 hover:bg-primary/10"
+                    >
+                      Take the preference quiz
+                    </Button>
                   </Link>
+                </div>
+
+                <div className="grid flex-1 gap-6 sm:grid-cols-2">
+                  {experienceSteps.map((step) => (
+                    <div
+                      key={step.title}
+                      className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-background/80 p-6"
+                    >
+                      <span className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                        {step.step}
+                      </span>
+                      <h3 className="text-lg font-semibold text-secondary">{step.title}</h3>
+                      <p className="text-sm text-muted-foreground">{step.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="pricing" className="toyota-container grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div className="space-y-6">
+              <span className="toyota-chip">Total ownership clarity</span>
+              <h2 className="text-pretty text-3xl font-black tracking-tight text-secondary sm:text-4xl">
+                Understand payments, insurance, and incentives before you step inside the dealership.
+              </h2>
+              <p className="text-lg text-muted-foreground sm:text-xl">
+                Toyota Agent blends real-world insurer quotes with current Toyota offers, so every figure feels
+                trustworthy.
+              </p>
+
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li className="flex items-center gap-3">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Personalized payment scenarios with APR transparency
                 </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    How It Works
-                  </Link>
+                <li className="flex items-center gap-3">
+                  <Gauge className="h-4 w-4 text-primary" />
+                  Ownership cost forecasts tuned to your commute and lifestyle
                 </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Pricing
-                  </Link>
+                <li className="flex items-center gap-3">
+                  <CalendarCheck className="h-4 w-4 text-primary" />
+                  One-click test drive scheduling once you're ready
                 </li>
               </ul>
             </div>
-            <div>
-              <h4 className="font-semibold mb-3">Company</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    About
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Careers
-                  </Link>
-                </li>
-              </ul>
+
+            <div className="toyota-surface relative overflow-hidden">
+              <div className="relative grid gap-4 rounded-[1.5rem] border border-border/70 bg-card/90 p-6">
+                <div className="rounded-2xl bg-secondary/90 p-6 text-secondary-foreground">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70">Featured plan</p>
+                  <div className="mt-4 flex items-end gap-2">
+                    <span className="text-4xl font-bold text-white">$816</span>
+                    <span className="text-sm text-white/70">per month</span>
+                  </div>
+                  <p className="mt-4 text-sm text-white/80">RAV4 Hybrid • 60 month plan • Insurance + payment</p>
+                </div>
+                <div className="grid gap-4 rounded-2xl border border-border/60 bg-background/90 p-5">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground/90">
+                    <span>Car payment</span>
+                    <span className="font-semibold text-secondary">$671/mo</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground/90">
+                    <span>Insurance estimate</span>
+                    <span className="font-semibold text-secondary">$145/mo</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground/90">
+                    <span>Manufacturer incentives</span>
+                    <span className="font-semibold text-primary">-$1,200</span>
+                  </div>
+                  <div className="h-[1px] w-full bg-border" />
+                  <div className="flex items-center justify-between text-base font-semibold text-secondary">
+                    <span>Total ownership view</span>
+                    <span>$816/mo</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold mb-3">Legal</h4>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Privacy
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Terms
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-foreground">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
+          </section>
+
+          <section aria-labelledby="cta" className="px-4">
+            <div className="toyota-container">
+              <div className="toyota-gradient relative overflow-hidden rounded-[2.5rem] px-8 py-16 sm:px-12">
+                <div className="absolute -left-24 top-24 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
+                <div className="absolute -right-16 -top-32 h-52 w-52 rounded-full bg-white/10 blur-3xl" />
+                <div className="relative flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="max-w-2xl space-y-5">
+                    <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+                      Toyota precision. Human warmth.
+                    </span>
+                    <h2 id="cta" className="text-pretty text-3xl font-black tracking-tight sm:text-4xl">
+                      Ready to drive your Toyota story forward?
+                    </h2>
+                    <p className="text-base text-white/80 sm:text-lg">
+                      Join the experience and let Toyota Agent orchestrate every step—from discovery to the first turn
+                      of the ignition.
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <Link href="/signup">
+                      <Button className="h-12 rounded-full bg-white px-8 text-base font-semibold text-secondary hover:bg-white/90">
+                        Create Toyota Agent account
+                      </Button>
+                    </Link>
+                    <Link href="/chat">
+                      <Button
+                        variant="ghost"
+                        className="h-12 rounded-full border border-white/25 bg-white/10 px-8 text-base font-semibold text-white hover:bg-white/20"
+                      >
+                        Talk to the agent
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="pt-8 border-t border-border text-center text-sm text-muted-foreground">
-            <p>© 2025 Toyota Agent. Built for HackUTD.</p>
-          </div>
-        </div>
-      </footer>
+          </section>
+        </main>
+      </div>
+      <ToyotaFooter />
     </div>
   )
 }

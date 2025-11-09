@@ -3,11 +3,14 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ArrowLeft, ArrowRight, UserPlus } from "lucide-react"
+
+import { ToyotaHeader } from "@/components/layout/toyota-header"
+import { ToyotaFooter } from "@/components/layout/toyota-footer"
+import { supabase } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Car } from "lucide-react"
-import { supabase } from "@/lib/supabase/client"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -53,50 +56,82 @@ export default function SignupPage() {
     })
   }
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/40">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex h-16 items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <ToyotaHeader
+        navItems={[
+          { label: "Home", href: "/" },
+          { label: "Browse", href: "/browse" },
+          { label: "Compare", href: "/compare" },
+        ]}
+        actions={[
+          { label: "Sign in", href: "/login", variant: "ghost" },
+        ]}
+        translucent={false}
+      />
+
+      <main className="flex flex-1 items-center justify-center px-4 py-16">
+        <div className="grid w-full max-w-5xl gap-10 rounded-[2.5rem] border border-border/70 bg-card/70 p-10 shadow-[0_32px_80px_-70px_rgba(15,20,26,0.85)] backdrop-blur lg:grid-cols-[0.95fr_1.05fr] lg:p-16">
+          <div className="flex flex-col justify-between gap-10">
+            <div className="space-y-6">
+              <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-secondary">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Toyota Agent
+              </Link>
+              <div className="space-y-4">
+                <h1 className="text-3xl font-black tracking-tight text-secondary sm:text-4xl">
+                  Craft your Toyota Agent profile.
+                </h1>
+                <p className="text-base text-muted-foreground sm:text-lg">
+                  Save your quiz results, favourite models, and personalized cost breakdowns. Your Toyota journey stays
+                  synchronized across chat, comparisons, and test-drive bookings.
+                </p>
               </div>
-              <span className="text-xl font-bold">Toyota Agent</span>
-            </Link>
+              <div className="rounded-2xl border border-border/70 bg-background/70 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">
+                    <UserPlus className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p className="font-semibold text-secondary">Why create an account?</p>
+                    <ul className="space-y-1 text-sm">
+                      <li>• Store your Toyota preferences and chat history</li>
+                      <li>• Receive tailored incentives and financing scenarios</li>
+                      <li>• Book test drives with a single tap</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              By signing up you agree to Toyota Agent&apos;s terms of service and privacy policy.
+            </p>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Create your account</h1>
-            <p className="text-muted-foreground">Start your Toyota discovery journey today</p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-8 shadow-lg">
+          <div className="rounded-[2rem] border border-border/70 bg-background/90 p-8 shadow-[0_24px_58px_-50px_rgba(15,20,26,0.85)]">
             <form className="space-y-6" onSubmit={handleSignup}>
               <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
+                <Label htmlFor="name" className="text-sm font-semibold text-secondary">
+                  Full name
+                </Label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="John Doe"
-                  className="h-11"
+                  placeholder="Jordan Reyes"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-secondary">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="h-11"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -104,12 +139,14 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password" className="text-sm font-semibold text-secondary">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
-                  className="h-11"
+                  placeholder="Create a secure password"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -117,46 +154,43 @@ export default function SignupPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
+                <Label htmlFor="confirm-password" className="text-sm font-semibold text-secondary">
+                  Confirm password
+                </Label>
                 <Input
                   id="confirm-password"
                   type="password"
-                  placeholder="••••••••"
-                  className="h-11"
+                  placeholder="Repeat password"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
               </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm font-semibold text-red-500">{error}</p>}
 
               <Button
                 type="submit"
-                className="w-full h-11 bg-accent hover:bg-accent/90 text-accent-foreground"
+                className="h-12 w-full rounded-full text-sm font-semibold shadow-[0_24px_48px_-32px_rgba(235,10,30,0.6)]"
                 disabled={loading}
               >
-                {loading ? "Creating..." : "Create Account"}
+                {loading ? "Creating..." : "Create account"}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-card text-muted-foreground">Or continue with</span>
-                </div>
+            <div className="mt-8 space-y-4">
+              <div className="relative text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                <span className="bg-background px-3">Or continue with</span>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
               </div>
-
               <Button
                 type="button"
                 onClick={handleGoogleSignup}
                 variant="outline"
-                className="w-full mt-4 h-11 bg-transparent"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full border-border/70 bg-card/70 text-sm font-semibold hover:border-primary/60"
               >
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fill="currentColor"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -180,13 +214,15 @@ export default function SignupPage() {
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
               Already have an account?{" "}
-              <Link href="/login" className="text-accent hover:underline font-medium">
+              <Link href="/login" className="font-semibold text-primary hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
         </div>
-      </div>
+      </main>
+
+      <ToyotaFooter />
     </div>
   )
 }

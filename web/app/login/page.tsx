@@ -3,11 +3,14 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react"
+
+import { ToyotaHeader } from "@/components/layout/toyota-header"
+import { ToyotaFooter } from "@/components/layout/toyota-footer"
+import { supabase } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Car } from "lucide-react"
-import { supabase } from "@/lib/supabase/client"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -44,38 +47,62 @@ export default function LoginPage() {
     })
   }
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/40">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex h-16 items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <ToyotaHeader
+        navItems={[
+          { label: "Home", href: "/" },
+          { label: "Browse", href: "/browse" },
+          { label: "Compare", href: "/compare" },
+        ]}
+        actions={[
+          { label: "Create account", href: "/signup", variant: "primary", icon: <ArrowRight className="h-4 w-4" /> },
+        ]}
+        translucent={false}
+      />
+
+      <main className="flex flex-1 items-center justify-center px-4 py-16">
+        <div className="grid w-full max-w-5xl gap-10 rounded-[2.5rem] border border-border/70 bg-card/70 p-10 shadow-[0_32px_80px_-70px_rgba(15,20,26,0.85)] backdrop-blur lg:grid-cols-[1.05fr_0.95fr] lg:p-16">
+          <div className="flex flex-col justify-between gap-10">
+            <div className="space-y-6">
+              <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-secondary">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Toyota Agent
+              </Link>
+              <div className="space-y-4">
+                <h1 className="text-3xl font-black tracking-tight text-secondary sm:text-4xl">Welcome back, driver.</h1>
+                <p className="text-base text-muted-foreground sm:text-lg">
+                  Sign in to keep collaborating with your Toyota Agent—your saved preferences, comparisons, and test
+                  drive plans are ready where you left them.
+                </p>
               </div>
-              <span className="text-xl font-bold">Toyota Agent</span>
-            </Link>
+              <div className="rounded-2xl border border-border/70 bg-background/70 p-6">
+                <div className="flex items-start gap-4">
+                  <div className="rounded-full bg-primary/10 p-3 text-primary">
+                    <Mail className="h-5 w-5" />
+                  </div>
+                  <div className="space-y-2 text-sm text-muted-foreground">
+                    <p className="font-semibold text-secondary">Pro tip</p>
+                    <p>Use the same email from your test-drive request—Toyota Agent keeps all your journeys synced.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="space-y-3 text-xs text-muted-foreground">
+              <p>Secure sign-in powered by Supabase Auth. Your information stays within Toyota Agent.</p>
+            </div>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-2">Welcome back</h1>
-            <p className="text-muted-foreground">Sign in to continue your Toyota journey</p>
-          </div>
-
-          <div className="rounded-xl border border-border bg-card p-8 shadow-lg">
+          <div className="rounded-[2rem] border border-border/70 bg-background/90 p-8 shadow-[0_24px_58px_-50px_rgba(15,20,26,0.85)]">
             <form className="space-y-6" onSubmit={handleLogin}>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-sm font-semibold text-secondary">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  className="h-11"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -84,46 +111,47 @@ export default function LoginPage() {
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">Password</Label>
-                  <Link href="/forgot-password" className="text-sm text-accent hover:underline">
-                    Forgot password?
+                  <Label htmlFor="password" className="text-sm font-semibold text-secondary">
+                    Password
+                  </Label>
+                  <Link href="/forgot-password" className="text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground hover:text-primary">
+                    Forgot?
                   </Link>
                 </div>
                 <Input
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  className="h-11"
+                  className="h-12 rounded-full border-border/70 bg-card/60 px-5"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
 
-              {error && <p className="text-sm text-red-500">{error}</p>}
+              {error && <p className="text-sm font-semibold text-red-500">{error}</p>}
 
-              <Button type="submit" className="w-full h-11 bg-primary hover:bg-primary/90" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+              <Button
+                type="submit"
+                className="h-12 w-full rounded-full text-sm font-semibold shadow-[0_24px_48px_-32px_rgba(235,10,30,0.6)]"
+                disabled={loading}
+              >
+                {loading ? "Signing in..." : "Sign in"}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-card text-muted-foreground">Or continue with</span>
-                </div>
+            <div className="mt-8 space-y-4">
+              <div className="relative text-center text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                <span className="bg-background px-3">Or continue with</span>
+                <div className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
               </div>
-
               <Button
                 type="button"
                 onClick={handleGoogleLogin}
                 variant="outline"
-                className="w-full mt-4 h-11 bg-transparent"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full border-border/70 bg-card/70 text-sm font-semibold hover:border-primary/60"
               >
-                <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
                   <path
                     fill="currentColor"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -146,14 +174,16 @@ export default function LoginPage() {
             </div>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
-              Don't have an account?{" "}
-              <Link href="/signup" className="text-accent hover:underline font-medium">
-                Sign up
+              Don&apos;t have an account?{" "}
+              <Link href="/signup" className="font-semibold text-primary hover:underline">
+                Create one
               </Link>
             </p>
           </div>
         </div>
-      </div>
+      </main>
+
+      <ToyotaFooter />
     </div>
   )
 }

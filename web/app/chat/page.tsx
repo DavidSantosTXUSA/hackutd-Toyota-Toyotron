@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import { Send, User, Bot, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Car, Send, User, Bot } from "lucide-react"
+import { ToyotaHeader } from "@/components/layout/toyota-header"
 import { RequireAuth } from "@/components/auth/RequireAuth"
 import { LogoutButton } from "@/components/auth/LogoutButton"
 
@@ -45,108 +45,111 @@ export default function ChatPage() {
 
   return (
     <RequireAuth>
-      <div className="h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold">Toyota Agent</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/browse">
-                <Button variant="outline" size="sm">
-                  Browse All
-                </Button>
-              </Link>
-              <Link href="/compare">
-                <Button variant="outline" size="sm">
-                  Compare
-                </Button>
-              </Link>
-              <LogoutButton />
-            </div>
-          </div>
-        </div>
-      </header>
+      <div className="flex h-screen flex-col bg-background text-foreground">
+        <ToyotaHeader
+          navItems={[
+            { label: "Browse", href: "/browse" },
+            { label: "Compare", href: "/compare" },
+            { label: "Test Drive", href: "/test-drive" },
+          ]}
+          actions={[
+            { label: "Browse models", href: "/browse", variant: "secondary" },
+          ]}
+          rightSlot={<LogoutButton />}
+          translucent={false}
+        />
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-hidden">
-        <div className="container mx-auto px-6 lg:px-8 h-full max-w-4xl py-6">
-          <ScrollArea className="h-full pr-4">
-            <div className="space-y-6">
-              {messages.map((message, i) => (
-                <div key={i} className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                  {message.role === "agent" && (
-                    <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                      <Bot className="w-5 h-5 text-accent-foreground" />
-                    </div>
-                  )}
-                  <div
-                    className={`flex flex-col gap-3 max-w-[80%] ${message.role === "user" ? "items-end" : "items-start"}`}
-                  >
-                    <div
-                      className={`rounded-2xl px-5 py-3 ${
-                        message.role === "user" ? "bg-primary text-primary-foreground" : "bg-card border border-border"
-                      }`}
-                    >
-                      <p className="text-sm leading-relaxed">{message.content}</p>
-                    </div>
-                    {message.suggestions && (
-                      <div className="flex flex-wrap gap-2">
-                        {message.suggestions.map((suggestion, j) => (
-                          <Button
-                            key={j}
-                            variant="outline"
-                            size="sm"
-                            className="text-xs bg-transparent"
-                            onClick={() => setInput(suggestion)}
-                          >
-                            {suggestion}
-                          </Button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {message.role === "user" && (
-                    <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                      <User className="w-5 h-5 text-primary-foreground" />
-                    </div>
-                  )}
+        <main className="flex-1">
+          <div className="toyota-container flex h-full max-w-4xl flex-col py-8">
+            <div className="mb-8 rounded-3xl border border-border/70 bg-card/70 px-6 py-5 backdrop-blur">
+              <div className="flex items-start gap-4">
+                <div className="rounded-full bg-primary/10 p-3 text-primary">
+                  <Sparkles className="h-5 w-5" />
                 </div>
-              ))}
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                    Toyota agent live
+                  </p>
+                  <h2 className="text-lg font-semibold text-secondary">
+                    Ask anything about Toyota pricing, trims, or ownership. Responses adapt to your quiz and browsing.
+                  </h2>
+                </div>
+              </div>
             </div>
-          </ScrollArea>
-        </div>
-      </div>
 
-      {/* Input Area */}
-      <div className="border-t border-border bg-background">
-        <div className="container mx-auto px-6 lg:px-8 py-4 max-w-4xl">
-          <div className="flex gap-3">
-            <Input
-              placeholder="Ask about Toyota models, pricing, features..."
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              className="h-11 flex-1"
-            />
-            <Button
-              onClick={handleSend}
-              size="icon"
-              className="h-11 w-11 bg-accent hover:bg-accent/90 text-accent-foreground flex-shrink-0"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
+            <div className="relative flex-1 overflow-hidden rounded-[2rem] border border-border/70 bg-card/60 backdrop-blur">
+              <ScrollArea className="h-full p-8">
+                <div className="space-y-6">
+                  {messages.map((message, i) => {
+                    const isUser = message.role === "user"
+                    return (
+                      <div key={i} className={`flex gap-4 ${isUser ? "justify-end" : "justify-start"}`}>
+                        {!isUser && (
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <Bot className="h-5 w-5" />
+                          </div>
+                        )}
+                        <div className={`flex max-w-[82%] flex-col gap-3 ${isUser ? "items-end" : "items-start"}`}>
+                          <div
+                            className={`rounded-3xl px-6 py-4 text-sm leading-relaxed ${
+                              isUser
+                                ? "bg-primary text-primary-foreground shadow-[0_24px_48px_-32px_rgba(235,10,30,0.6)]"
+                                : "border border-border/70 bg-background/90"
+                            }`}
+                          >
+                            {message.content}
+                          </div>
+                          {message.suggestions && (
+                            <div className="flex flex-wrap gap-2">
+                              {message.suggestions.map((suggestion) => (
+                                <Button
+                                  key={suggestion}
+                                  variant="outline"
+                                  size="sm"
+                                  className="rounded-full border-border/60 text-xs font-semibold text-muted-foreground hover:border-primary/70 hover:text-primary"
+                                  onClick={() => setInput(suggestion)}
+                                >
+                                  {suggestion}
+                                </Button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                        {isUser && (
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                            <User className="h-5 w-5" />
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </ScrollArea>
+
+              <div className="border-t border-border/60 bg-background/80 px-6 py-4">
+                <div className="flex gap-3">
+                  <Input
+                    placeholder="Ask about Toyota models, deals, or ownership..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                    className="h-12 flex-1 rounded-full border-border/70 bg-card/80 px-5"
+                  />
+                  <Button
+                    onClick={handleSend}
+                    size="icon"
+                    className="h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-[0_24px_48px_-32px_rgba(235,10,30,0.6)] hover:bg-primary/90"
+                  >
+                    <Send className="h-5 w-5" />
+                  </Button>
+                </div>
+                <p className="mt-3 text-center text-xs text-muted-foreground">
+                  Toyota Agent cross-checks real Toyota data—pricing, incentives, safety, and availability.
+                </p>
+              </div>
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
-            Ask anything about Toyota vehicles, features, or pricing
-          </p>
-        </div>
-      </div>
+        </main>
       </div>
     </RequireAuth>
   )

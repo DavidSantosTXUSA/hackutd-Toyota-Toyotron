@@ -1,12 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import type { ReactNode } from "react"
+import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Car, Check } from "lucide-react"
+import { useState } from "react"
+import { Check } from "lucide-react"
+
+import { ToyotaFooter } from "@/components/layout/toyota-footer"
+import { ToyotaHeader } from "@/components/layout/toyota-header"
 import { RequireAuth } from "@/components/auth/RequireAuth"
 import { LogoutButton } from "@/components/auth/LogoutButton"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 const availableCars = [
   {
@@ -19,6 +24,7 @@ const availableCars = [
     msrp: 36000,
     drive: "AWD",
     insurance: 145,
+    image: "/toyota-rav4-hybrid.jpg",
   },
   {
     id: 2,
@@ -30,6 +36,7 @@ const availableCars = [
     msrp: 28000,
     drive: "FWD",
     insurance: 120,
+    image: "/toyota-camry-modern.png",
   },
   {
     id: 3,
@@ -41,192 +48,217 @@ const availableCars = [
     msrp: 45000,
     drive: "AWD",
     insurance: 165,
+    image: "/toyota-highlander.png",
   },
 ]
 
+const navItems = [
+  { label: "Browse", href: "/browse" },
+  { label: "Agent", href: "/chat" },
+  { label: "Test Drive", href: "/test-drive" },
+]
+
 export default function ComparePage() {
-  const [selectedCars, setSelectedCars] = useState([availableCars[0], availableCars[1], availableCars[2]])
+  const [selectedCars] = useState([availableCars[0], availableCars[1], availableCars[2]])
 
   return (
     <RequireAuth>
-      <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-        <div className="container mx-auto px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                <Car className="w-5 h-5 text-primary-foreground" />
+      <div className="flex min-h-screen flex-col bg-background text-foreground">
+        <ToyotaHeader
+          navItems={navItems}
+          actions={[
+            { label: "Ask Agent", href: "/chat", variant: "secondary" },
+          ]}
+          rightSlot={<LogoutButton />}
+        />
+
+        <main className="flex-1 space-y-16 pb-24 pt-12">
+          <section className="toyota-container space-y-6">
+            <div className="space-y-4">
+              <span className="toyota-chip">Side-by-side intelligence</span>
+              <div className="space-y-3">
+                <h1 className="text-pretty text-3xl font-black tracking-tight text-secondary sm:text-4xl">
+                  Compare Toyota models with clarity and confidence.
+                </h1>
+                <p className="max-w-3xl text-base text-muted-foreground sm:text-lg">
+                  Toyota Agent surfaces curated specs, costs, and safety signals in an interface tuned for decision
+                  making—balanced, legible, and unmistakably Toyota.
+                </p>
               </div>
-              <span className="text-xl font-bold">Toyota Agent</span>
-            </Link>
-            <div className="flex items-center gap-3">
-              <Link href="/chat">
-                <Button variant="outline" size="sm">
-                  Ask Agent
-                </Button>
-              </Link>
-              <Link href="/browse">
-                <Button variant="outline" size="sm">
-                  Browse All
-                </Button>
-              </Link>
-              <LogoutButton />
             </div>
-          </div>
-        </div>
-      </header>
 
-      <div className="container mx-auto px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Compare Toyota Models</h1>
-          <p className="text-muted-foreground">See how different models stack up side-by-side</p>
-        </div>
-
-        {/* Comparison Table */}
-        <div className="overflow-x-auto">
-          <div className="inline-block min-w-full align-middle">
-            <div className="rounded-xl border border-border bg-card overflow-hidden">
-              <table className="min-w-full divide-y divide-border">
-                <thead>
-                  <tr className="bg-muted/50">
-                    <th className="px-6 py-4 text-left text-sm font-semibold w-48">Feature</th>
-                    {selectedCars.map((car) => (
-                      <th key={car.id} className="px-6 py-4 text-left min-w-[280px]">
-                        <div className="space-y-3">
-                          <div className="aspect-[4/3] bg-muted rounded-lg overflow-hidden">
-                            <img
-                              src={`/toyota-.jpg?height=200&width=300&query=Toyota+${car.name}`}
-                              alt={car.name}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div>
-                            <Badge className="mb-2">{car.year}</Badge>
-                            <h3 className="font-bold text-lg">{car.name}</h3>
-                            <p className="text-sm text-muted-foreground">{car.type}</p>
-                          </div>
-                          <div className="text-2xl font-bold text-accent">${car.msrp.toLocaleString()}</div>
-                        </div>
+            <div className="overflow-hidden rounded-[2.5rem] border border-border/70 bg-card/80 shadow-[0_36px_80px_-64px_rgba(15,20,26,0.85)]">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-border/60">
+                  <thead>
+                    <tr className="bg-background/60 backdrop-blur">
+                      <th className="px-6 py-5 text-left text-xs font-semibold uppercase tracking-[0.28em] text-muted-foreground">
+                        Feature
                       </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border">
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Starting Price</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <span className="text-lg font-bold">${car.msrp.toLocaleString()}</span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-muted/20">
-                    <td className="px-6 py-4 text-sm font-medium">MPG (City/Hwy)</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <span className="font-semibold">
+                      {selectedCars.map((car) => (
+                        <th key={car.id} className="px-6 py-5">
+                          <div className="space-y-4">
+                            <div className="relative overflow-hidden rounded-3xl border border-border/70">
+                              <div className="relative aspect-[4/3]">
+                                <Image
+                                  src={car.image}
+                                  alt={car.name}
+                                  fill
+                                  className="object-cover"
+                                  sizes="(min-width: 1280px) 25vw, (min-width: 768px) 45vw, 90vw"
+                                />
+                              </div>
+                              <div className="absolute left-4 top-4">
+                                <Badge className="rounded-full border-border/60 bg-background/85 px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.3em] text-secondary">
+                                  {car.year}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="space-y-1">
+                              <h3 className="text-xl font-semibold text-secondary">{car.name}</h3>
+                              <p className="text-xs uppercase tracking-[0.28em] text-muted-foreground">{car.type}</p>
+                            </div>
+                            <div className="text-2xl font-bold text-secondary">${car.msrp.toLocaleString()}</div>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border/60 text-sm">
+                    <CompareRow label="Starting price">
+                      {selectedCars.map((car) => (
+                        <span key={car.id} className="font-semibold text-secondary">
+                          ${car.msrp.toLocaleString()}
+                        </span>
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="MPG (City/Hwy)" subtle>
+                      {selectedCars.map((car) => (
+                        <span key={car.id} className="font-semibold text-secondary">
                           {car.mpg.city}/{car.mpg.highway}
                         </span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Seating</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <span className="font-semibold">{car.seats} seats</span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-muted/20">
-                    <td className="px-6 py-4 text-sm font-medium">Drive Type</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <span className="font-semibold">{car.drive}</span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Est. Insurance</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <span className="font-semibold">${car.insurance}/mo</span>
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-muted/20">
-                    <td className="px-6 py-4 text-sm font-medium">Toyota Safety Sense</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <Check className="w-5 h-5 text-accent" />
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium">Apple CarPlay</td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <Check className="w-5 h-5 text-accent" />
-                      </td>
-                    ))}
-                  </tr>
-                  <tr className="bg-muted/20">
-                    <td className="px-6 py-4 text-sm font-medium">Panoramic Moonroof</td>
-                    {selectedCars.map((car, i) => (
-                      <td key={car.id} className="px-6 py-4">
-                        {i === 2 ? (
-                          <Check className="w-5 h-5 text-accent" />
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Seating">
+                      {selectedCars.map((car) => (
+                        <span key={car.id} className="font-semibold text-secondary">
+                          {car.seats} seats
+                        </span>
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Drive type" subtle>
+                      {selectedCars.map((car) => (
+                        <span key={car.id} className="font-semibold text-secondary">
+                          {car.drive}
+                        </span>
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Est. insurance">
+                      {selectedCars.map((car) => (
+                        <span key={car.id} className="font-semibold text-secondary">
+                          ${car.insurance}/mo
+                        </span>
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Toyota Safety Sense" subtle>
+                      {selectedCars.map((car) => (
+                        <Check key={car.id} className="mx-auto h-5 w-5 text-primary" />
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Apple CarPlay">
+                      {selectedCars.map((car) => (
+                        <Check key={car.id} className="mx-auto h-5 w-5 text-primary" />
+                      ))}
+                    </CompareRow>
+                    <CompareRow label="Panoramic roof" subtle>
+                      {selectedCars.map((car, i) =>
+                        i === selectedCars.length - 1 ? (
+                          <Check key={car.id} className="mx-auto h-5 w-5 text-primary" />
                         ) : (
-                          <span className="text-muted-foreground text-sm">Optional</span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                  <tr>
-                    <td className="px-6 py-4 text-sm font-medium"></td>
-                    {selectedCars.map((car) => (
-                      <td key={car.id} className="px-6 py-4">
-                        <div className="space-y-2">
-                          <Link href={`/car/${car.id}`}>
-                            <Button className="w-full bg-primary hover:bg-primary/90">View Details</Button>
-                          </Link>
-                          <Link href="/test-drive">
-                            <Button variant="outline" className="w-full bg-transparent">
-                              Schedule Test Drive
-                            </Button>
-                          </Link>
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
+                          <span key={car.id} className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+                            Optional
+                          </span>
+                        ),
+                      )}
+                    </CompareRow>
+                    <tr className="bg-background/70">
+                      <td className="px-6 py-5"></td>
+                      {selectedCars.map((car) => (
+                        <td key={car.id} className="px-6 py-5">
+                          <div className="flex flex-col gap-3">
+                            <Link href={`/car/${car.id}`}>
+                              <Button className="h-11 w-full rounded-full font-semibold">
+                                View details
+                              </Button>
+                            </Link>
+                            <Link href="/test-drive">
+                              <Button
+                                variant="outline"
+                                className="h-11 w-full rounded-full border-border/70 font-semibold hover:border-primary/70 hover:text-primary"
+                              >
+                                Schedule test drive
+                              </Button>
+                            </Link>
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        </div>
+          </section>
 
-        {/* Agent Recommendation */}
-        <div className="mt-8 rounded-xl border-2 border-accent bg-accent/5 p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-              <Car className="w-6 h-6 text-accent-foreground" />
+          <section className="toyota-container">
+            <div className="toyota-gradient relative overflow-hidden rounded-[2.25rem] px-10 py-12 sm:px-16">
+              <div className="absolute -left-16 bottom-10 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
+              <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
+              <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+                <div className="max-w-2xl space-y-4">
+                  <span className="text-xs font-semibold uppercase tracking-[0.3em] text-white/80">
+                    Agent recommendation
+                  </span>
+                  <h2 className="text-pretty text-2xl font-semibold sm:text-3xl">
+                    RAV4 Hybrid leads for balanced efficiency, budget, and confidence.
+                  </h2>
+                  <p className="text-sm text-white/85 sm:text-base">
+                    With 41/38 MPG, standard Toyota Safety Sense 3.0, and AWD capability, the RAV4 Hybrid hits your
+                    brief exactly. Toyota Agent can now tailor payment and insurance to your profile.
+                  </p>
+                </div>
+                <Link href="/chat">
+                  <Button className="h-12 rounded-full bg-white px-8 text-sm font-semibold text-secondary hover:bg-white/90">
+                    Ask the agent for next steps
+                  </Button>
+                </Link>
+              </div>
             </div>
-            <div>
-              <h3 className="font-bold text-lg mb-2">Agent Recommendation</h3>
-              <p className="text-muted-foreground mb-4">
-                Based on your preferences for fuel efficiency and budget around $35,000, the{" "}
-                <strong>RAV4 Hybrid</strong> is the best match. It offers excellent MPG (41/38), AWD capability, and
-                falls within your target price range.
-              </p>
-              <Link href="/chat">
-                <Button variant="outline">Ask Agent for More Details</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+          </section>
+        </main>
+
+        <ToyotaFooter />
       </div>
     </RequireAuth>
+  )
+}
+
+type CompareRowProps = {
+  label: string
+  children: ReactNode[]
+  subtle?: boolean
+}
+
+function CompareRow({ label, children, subtle }: CompareRowProps) {
+  return (
+    <tr className={subtle ? "bg-background/55" : undefined}>
+      <td className="px-6 py-5 text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+        {label}
+      </td>
+      {children.map((child, index) => (
+        <td key={index} className="px-6 py-5 text-center">
+          {child}
+        </td>
+      ))}
+    </tr>
   )
 }
