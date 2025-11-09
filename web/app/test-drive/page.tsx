@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Check, Clock, MapPin, SteeringWheel } from "lucide-react"
+import { ArrowLeft, Car, Check, Clock, MapPin } from "lucide-react"
 
 import { ToyotaFooter } from "@/components/layout/toyota-footer"
 import { RequireAuth } from "@/components/auth/RequireAuth"
@@ -56,7 +56,7 @@ export default function TestDrivePage() {
                   <DetailRow icon={<Clock className="h-4 w-4" />} label="Time">
                     {date?.toLocaleDateString()} at 2:00 PM
                   </DetailRow>
-                  <DetailRow icon={<SteeringWheel className="h-4 w-4" />} label="Vehicle">
+                  <DetailRow icon={<Car className="h-4 w-4" />} label="Vehicle">
                     2025 Toyota RAV4 Hybrid
                   </DetailRow>
                 </div>
